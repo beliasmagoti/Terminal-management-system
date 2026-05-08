@@ -11,29 +11,40 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Override;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([])]
 
 class User extends Authenticatable
 {
     
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, Notifiable, HasUuid, HasApiTokens, HasRoles;
     protected $fillable = [
     'name',
     'email',
     'password',
     'terminal_id',
-    'role',
     'status'
     ];
 
      
-    protected  $casts =
+    protected  $hidden  =
     
          [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed'
+            'remember_token',
+            'password'
         ];
+
+        #[Override]
+        protected function casts(): array
+        {
+            return [
+                'eamil_verified_at' => 'datetime',
+                'password'=> 'hashed'
+            ];
+        }
  
         
         public function terminal () {
@@ -42,5 +53,9 @@ class User extends Authenticatable
 
         public function notification () {
             return $this->hasMany(Notification::class);
+        }
+
+        public function auditLogs () {
+            return $this->hasMany(AuditLogs::class);
         }
 }

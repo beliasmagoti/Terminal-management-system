@@ -3,47 +3,89 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Sensor\SensorRequest;
+use App\Http\Resources\SensorResource;
+use App\Services\Sensor\SensorService;
+use Illuminate\Http\JsonResponse;
 
 class SensorController extends Controller
 {
+    public function __construct(
+        protected SensorService $sensorService
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * Display all sensors
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $sensors = $this->sensorService->getAll();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sensors retrieved successfully.',
+            'data' => SensorResource::collection($sensors),
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store sensor
      */
-    public function store(Request $request)
+    public function store(SensorRequest $request): JsonResponse
     {
-        //
+        $sensor = $this->sensorService->create(
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sensor created successfully.',
+            'data' => new SensorResource($sensor),
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display single sensor
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $sensor = $this->sensorService->getById($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => new SensorResource($sensor),
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update sensor
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(
+        SensorRequest $request,
+        string $id
+    ): JsonResponse {
+        $sensor = $this->sensorService->update(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sensor updated successfully.',
+            'data' => new SensorResource($sensor),
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete sensor
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $this->sensorService->delete($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sensor deleted successfully.',
+        ]);
     }
 }

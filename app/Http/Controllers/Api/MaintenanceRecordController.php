@@ -3,47 +3,90 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\MaintenanceRecord\MaintenanceRecordRequest;
+use App\Http\Resources\MaintenanceRecordResource;
+use App\Services\MaintenanceRecord\MaintenanceRecordService;
+use Illuminate\Http\JsonResponse;
 
 class MaintenanceRecordController extends Controller
 {
+    public function __construct(
+        protected MaintenanceRecordService $maintenanceRecordService
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * Display all maintenance records
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $records = $this->maintenanceRecordService->getAll();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Maintenance records retrieved successfully.',
+            'data' => MaintenanceRecordResource::collection($records),
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store maintenance record
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(
+        MaintenanceRecordRequest $request
+    ): JsonResponse {
+        $record = $this->maintenanceRecordService->create(
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Maintenance record created successfully.',
+            'data' => new MaintenanceRecordResource($record),
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Show single maintenance record
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $record = $this->maintenanceRecordService->getById($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => new MaintenanceRecordResource($record),
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update maintenance record
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(
+        MaintenanceRecordRequest $request,
+        string $id
+    ): JsonResponse {
+        $record = $this->maintenanceRecordService->update(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Maintenance record updated successfully.',
+            'data' => new MaintenanceRecordResource($record),
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete maintenance record
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $this->maintenanceRecordService->delete($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Maintenance record deleted successfully.',
+        ]);
     }
 }

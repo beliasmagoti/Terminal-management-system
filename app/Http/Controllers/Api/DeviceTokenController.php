@@ -3,47 +3,103 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\DeviceToken\DeviceTokenRequest;
+use App\Http\Resources\DeviceTokenResource;
+use App\Services\DeviceToken\DeviceTokenService;
+use Illuminate\Http\JsonResponse;
 
 class DeviceTokenController extends Controller
 {
+    public function __construct(
+        protected DeviceTokenService $deviceTokenService
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * List tokens
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $tokens = $this->deviceTokenService->getAll();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device tokens retrieved successfully.',
+            'data' => DeviceTokenResource::collection($tokens),
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Register token
      */
-    public function store(Request $request)
+    public function store(DeviceTokenRequest $request): JsonResponse
     {
-        //
+        $token = $this->deviceTokenService->create(
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device token registered successfully.',
+            'data' => new DeviceTokenResource($token),
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Show token
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $token = $this->deviceTokenService->getById($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => new DeviceTokenResource($token),
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update token
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(
+        DeviceTokenRequest $request,
+        string $id
+    ): JsonResponse {
+        $token = $this->deviceTokenService->update(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device token updated successfully.',
+            'data' => new DeviceTokenResource($token),
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Deactivate token
      */
-    public function destroy(string $id)
+    public function deactivate(string $id): JsonResponse
     {
-        //
+        $token = $this->deviceTokenService->deactivate($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device token deactivated successfully.',
+            'data' => new DeviceTokenResource($token),
+        ]);
+    }
+
+    /**
+     * Delete token
+     */
+    public function destroy(string $id): JsonResponse
+    {
+        $this->deviceTokenService->delete($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device token deleted successfully.',
+        ]);
     }
 }

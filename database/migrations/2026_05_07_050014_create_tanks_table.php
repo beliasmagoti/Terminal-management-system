@@ -15,13 +15,13 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('terminal_id')->constrained('terminals')->cascadeOnDelete();  
             $table->string('name');
-            $table->string('number')->unique();
+            $table->string('tank_number')->unique();
             $table->string('fuel_type');
             $table->decimal('capacity_liters', 15, 2);
             $table->decimal('safe_level', 15, 2);
             $table->decimal('critical_level', 15, 2);
             $table->decimal('current_volume', 15, 2)->default('0');
-            $table->enum('status', ['active', 'maintenance'])->default('active');
+            $table->enum('status', ['active', 'inactive','maintenance'])->default('active');
             $table->timestamps();
         });
     }
@@ -34,3 +34,7 @@ return new class extends Migration
         Schema::dropIfExists('tanks');
     }
 };
+
+
+
+

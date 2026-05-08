@@ -3,47 +3,90 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\FuelTransfer\FuelTransferRequest;
+use App\Http\Resources\FuelTransferResource;
+use App\Services\FuelTransfer\FuelTransferService;
+use Illuminate\Http\JsonResponse;
 
 class FuelTransferController extends Controller
 {
+    public function __construct(
+        protected FuelTransferService $fuelTransferService
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * Display all transfers
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $transfers = $this->fuelTransferService->getAll();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Fuel transfers retrieved successfully.',
+            'data' => FuelTransferResource::collection($transfers),
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store transfer
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(
+        FuelTransferRequest $request
+    ): JsonResponse {
+        $transfer = $this->fuelTransferService->create(
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Fuel transfer created successfully.',
+            'data' => new FuelTransferResource($transfer),
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Show single transfer
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $transfer = $this->fuelTransferService->getById($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => new FuelTransferResource($transfer),
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update transfer
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(
+        FuelTransferRequest $request,
+        string $id
+    ): JsonResponse {
+        $transfer = $this->fuelTransferService->update(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Fuel transfer updated successfully.',
+            'data' => new FuelTransferResource($transfer),
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete transfer
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $this->fuelTransferService->delete($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Fuel transfer deleted successfully.',
+        ]);
     }
 }

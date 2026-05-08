@@ -3,47 +3,104 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Notification\NotificationRequest;
+use App\Http\Resources\NotificationResource;
+use App\Services\Notification\NotificationService;
+use Illuminate\Http\JsonResponse;
 
 class NotificationController extends Controller
 {
+    public function __construct(
+        protected NotificationService $notificationService
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * Display all notifications
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $notifications = $this->notificationService->getAll();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notifications retrieved successfully.',
+            'data' => NotificationResource::collection($notifications),
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store notification
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(
+        NotificationRequest $request
+    ): JsonResponse {
+        $notification = $this->notificationService->create(
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification created successfully.',
+            'data' => new NotificationResource($notification),
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Show single notification
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $notification = $this->notificationService->getById($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => new NotificationResource($notification),
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update notification
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(
+        NotificationRequest $request,
+        string $id
+    ): JsonResponse {
+        $notification = $this->notificationService->update(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification updated successfully.',
+            'data' => new NotificationResource($notification),
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Mark as read
      */
-    public function destroy(string $id)
+    public function markAsRead(string $id): JsonResponse
     {
-        //
+        $notification = $this->notificationService->markAsRead($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification marked as read.',
+            'data' => new NotificationResource($notification),
+        ]);
+    }
+
+    /**
+     * Delete notification
+     */
+    public function destroy(string $id): JsonResponse
+    {
+        $this->notificationService->delete($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification deleted successfully.',
+        ]);
     }
 }

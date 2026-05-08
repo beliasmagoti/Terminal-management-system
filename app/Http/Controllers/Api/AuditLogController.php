@@ -3,47 +3,42 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Services\AuditLog\AuditLogService;
+use Illuminate\Http\JsonResponse;
 
 class AuditLogController extends Controller
 {
+    public function __construct(
+        protected AuditLogService $auditLogService
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * Get all logs
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $logs = $this->auditLogService->getAll();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Audit logs retrieved successfully.',
+            'data' => $logs,
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Manual log creation (optional admin use)
      */
-    public function store(Request $request)
+    public function store(\App\Http\Requests\AuditLog\AuditLogRequest $request)
     {
-        //
-    }
+        $log = $this->auditLogService->create(
+            $request->validated()
+        );
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'success' => true,
+            'message' => 'Audit log created successfully.',
+            'data' => $log,
+        ], 201);
     }
 }

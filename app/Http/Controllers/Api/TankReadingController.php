@@ -3,47 +3,89 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\TankReading\TankReadingRequest;
+use App\Http\Resources\TankReadingResource;
+use App\Services\TankReading\TankReadingService;
+use Illuminate\Http\JsonResponse;
 
 class TankReadingController extends Controller
 {
+    public function __construct(
+        protected TankReadingService $tankReadingService
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * Display all readings
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $readings = $this->tankReadingService->getAll();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tank readings retrieved successfully.',
+            'data' => TankReadingResource::collection($readings),
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store reading
      */
-    public function store(Request $request)
+    public function store(TankReadingRequest $request): JsonResponse
     {
-        //
+        $reading = $this->tankReadingService->create(
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tank reading created successfully.',
+            'data' => new TankReadingResource($reading),
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Show single reading
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $reading = $this->tankReadingService->getById($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => new TankReadingResource($reading),
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update reading
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(
+        TankReadingRequest $request,
+        string $id
+    ): JsonResponse {
+        $reading = $this->tankReadingService->update(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tank reading updated successfully.',
+            'data' => new TankReadingResource($reading),
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete reading
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $this->tankReadingService->delete($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tank reading deleted successfully.',
+        ]);
     }
 }

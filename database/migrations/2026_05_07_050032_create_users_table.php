@@ -4,8 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+
 return new class extends Migration
 {
+
+  
     /**
      * Run the migrations.
      */
@@ -19,12 +22,12 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->enum('role', [
-                                    'super_admin',
-                                    'terminal_manager',
-                                    'terminal_supervisor',
-                                    'terminal_operator',
-                                    'terminal_technician']);
+            // $table->enum('role', [
+            //                         'super_admin',
+            //                         'terminal_manager',
+            //                         'terminal_supervisor',
+            //                         'terminal_operator',
+            //                         'terminal_technician']);
 
             $table->rememberToken();
             $table->timestamps();

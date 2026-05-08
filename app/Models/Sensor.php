@@ -11,6 +11,7 @@ class Sensor extends Model
 
     protected $fillable = [
         'tank_id',
+        'terminal_id',
         'serial_number',
         'sensor_type',
         'manufacturer',

@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tank_readings', function (Blueprint $table) {
-        
             $table->uuid('id')->primary();
             $table->string('name');
             $table->foreignUuid('terminal_id')->constrained('terminals')->cascadeOnDelete(); 

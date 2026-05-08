@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sensors', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('tank_id')->constrained('tanks')->cascadeOnDelete(); 
             $table->foreignUuid('terminal_id')->constrained('terminals')->cascadeOnDelete(); 
             $table->string('serial_number')->unique();
             $table->string('sensor_type');
