@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\FuelTransfer;
+namespace App\Services;
 
 use App\Interfaces\FuelTransferRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;

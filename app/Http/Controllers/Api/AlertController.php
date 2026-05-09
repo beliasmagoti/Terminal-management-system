@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Alert\AlertRequest;
+use App\Http\Requests\AlertRequest;
 use App\Http\Resources\AlertResource;
-use App\Services\Alert\AlertService;
+use App\Services\AlertService;
 use Illuminate\Http\JsonResponse;
 
 class AlertController extends Controller

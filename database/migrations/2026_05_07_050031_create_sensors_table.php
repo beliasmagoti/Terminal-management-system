@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('tank_id')->constrained('tanks')->cascadeOnDelete(); 
             $table->foreignUuid('terminal_id')->constrained('terminals')->cascadeOnDelete(); 
+            $table->string('name');
             $table->string('serial_number')->unique();
             $table->string('sensor_type');
             $table->string('manufacturer')->nullable();

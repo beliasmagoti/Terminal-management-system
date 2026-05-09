@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Tank;
+namespace App\Services;
 
 use App\Interfaces\TankRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;

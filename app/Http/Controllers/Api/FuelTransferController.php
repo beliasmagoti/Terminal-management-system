@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FuelTransfer\FuelTransferRequest;
+use App\Http\Requests\FuelTransferRequest;
 use App\Http\Resources\FuelTransferResource;
-use App\Services\FuelTransfer\FuelTransferService;
+use App\Services\FuelTransferService;
 use Illuminate\Http\JsonResponse;
 
 class FuelTransferController extends Controller

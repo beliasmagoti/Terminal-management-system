@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DeviceToken\DeviceTokenRequest;
+use App\Http\Requests\DeviceTokenRequest;
 use App\Http\Resources\DeviceTokenResource;
-use App\Services\DeviceToken\DeviceTokenService;
+use App\Services\DeviceTokenService;
 use Illuminate\Http\JsonResponse;
 
 class DeviceTokenController extends Controller

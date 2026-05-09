@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\AuditLog\AuditLogService;
+use App\Http\Requests\AuditLogRequest;
+use App\Services\AuditLogService;
 use Illuminate\Http\JsonResponse;
 
 class AuditLogController extends Controller
@@ -29,7 +30,7 @@ class AuditLogController extends Controller
     /**
      * Manual log creation (optional admin use)
      */
-    public function store(\App\Http\Requests\AuditLog\AuditLogRequest $request)
+    public function store(AuditLogRequest $request)
     {
         $log = $this->auditLogService->create(
             $request->validated()

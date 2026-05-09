@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\MaintenanceRecordController;
 
 use App\Http\Controllers\Api\AlertController;
 use App\Http\Controllers\Api\AuditLogController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DeviceTokenController;
 
 /*
@@ -47,7 +48,10 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::apiResource('users', UserController::class);
-
+        Route::get(
+            '/dashboard',
+            [DashboardController::class, 'index']
+        );
     /*
     |--------------------------------------------------------------------------
     | TERMINALS

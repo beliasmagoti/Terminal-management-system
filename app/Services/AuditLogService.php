@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\AuditLog;
+namespace App\Services;
 
 use App\Interfaces\AuditLogRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;

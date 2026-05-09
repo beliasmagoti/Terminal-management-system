@@ -2,93 +2,113 @@
 
 namespace App\Services\Sensor;
 
+use App\Events\Sensor\SensorActive;
+use App\Events\Sensor\SensorInactive;
+use App\Events\Sensor\SensorReadingUpdated;
 use App\Interfaces\SensorRepositoryInterface;
+use App\Interfaces\TankRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SensorService
 {
     public function __construct(
-       protected SensorRepositoryInterface $sensorRepository
+        protected SensorRepositoryInterface $sensorRepository,
+        protected TankRepositoryInterface $tankRepository
     ) {}
 
-    /**
-     * Get all sensors
-     */
-    public function getAll(): Collection
+    // =========================
+    // CRUD METHODS (Controller needs these)
+    // =========================
+
+    public function getAll(array $filters = []): Collection
     {
-        return $this->sensorRepository->all();
+        return $this->sensorRepository->all($filters);
     }
 
-    /**
-     * Get sensor by ID
-     */
-    public function getById(string $id)
+    public function getById(int $id)
     {
         $sensor = $this->sensorRepository->findById($id);
 
         if (!$sensor) {
-            throw new ModelNotFoundException('Sensor not found.');
+            throw new ModelNotFoundException('Sensor not found');
         }
 
         return $sensor;
     }
 
-    /**
-     * Create sensor
-     */
     public function create(array $data)
     {
-        return $this->sensorRepository->create([
-            'tank_id' => $data['tank_id'],
-            'name' => $data['name'],
-            'serial_number' => strtoupper($data['serial_number']),
-            'type' => $data['type'],
-            'manufacturer' => $data['manufacturer'] ?? null,
-            'model' => $data['model'] ?? null,
-            'installation_date' => $data['installation_date'] ?? null,
-            'last_calibrated_at' => $data['last_calibrated_at'] ?? null,
-            'firmware_version' => $data['firmware_version'] ?? null,
-            'ip_address' => $data['ip_address'] ?? null,
-            'status' => $data['status'] ?? 'active',
-            'notes' => $data['notes'] ?? null,
+        return $this->sensorRepository->create($data);
+    }
+
+    public function update(int $id, array $data)
+    {
+        return $this->sensorRepository->update($id, $data);
+    }
+
+    public function delete(int $id): bool
+    {
+        return $this->sensorRepository->delete($id);
+    }
+
+    // =========================
+    // IoT / REALTIME METHODS
+    // =========================
+
+    /**
+     * Handle sensor live data (heartbeat + reading)
+     */
+    public function handleSensorData(array $data)
+    {
+        $sensor = $this->getById($data['sensor_id']);
+
+        // Activate sensor
+        $this->sensorRepository->update($sensor->id, [
+            'status' => 'active',
+            'last_seen_at' => now(),
         ]);
+
+        event(new SensorActive([
+            'id' => $sensor->id,
+            'tank_id' => $sensor->tank_id,
+        ]));
+
+        // Update tank
+        $this->tankRepository->update($sensor->tank_id, [
+            'current_volume' => $data['volume_liters'],
+        ]);
+
+        // Fire reading event
+        event(new SensorReadingUpdated([
+            'sensor_id' => $sensor->id,
+            'tank_id' => $sensor->tank_id,
+            'fuel_level' => $data['fuel_level'],
+            'volume_liters' => $data['volume_liters'],
+            'temperature' => $data['temperature'] ?? null,
+            'timestamp' => now()->toDateTimeString(),
+        ]));
+
+        return $data;
     }
 
     /**
-     * Update sensor
+     * Mark sensor inactive
      */
-    public function update(string $id, array $data)
+    public function markSensorInactive(int $sensorId)
     {
-        $sensor = $this->getById($id);
+        $sensor = $this->getById($sensorId);
 
-        return $this->sensorRepository->update($sensor, [
-            'tank_id' => $data['tank_id'] ?? $sensor->tank_id,
-            'name' => $data['name'] ?? $sensor->name,
-
-            'serial_number' => isset($data['serial_number'])
-                ? strtoupper($data['serial_number'])
-                : $sensor->serial_number,
-
-            'type' => $data['type'] ?? $sensor->type,
-            'manufacturer' => $data['manufacturer'] ?? $sensor->manufacturer,
-            'model' => $data['model'] ?? $sensor->model,
-            'installation_date' => $data['installation_date'] ?? $sensor->installation_date,
-            'last_calibrated_at' => $data['last_calibrated_at'] ?? $sensor->last_calibrated_at,
-            'firmware_version' => $data['firmware_version'] ?? $sensor->firmware_version,
-            'ip_address' => $data['ip_address'] ?? $sensor->ip_address,
-            'status' => $data['status'] ?? $sensor->status,
-            'notes' => $data['notes'] ?? $sensor->notes,
+        $this->sensorRepository->update($sensor->id, [
+            'status' => 'inactive',
         ]);
-    }
 
-    /**
-     * Delete sensor
-     */
-    public function delete(string $id): bool
-    {
-        $sensor = $this->getById($id);
+        event(new SensorInactive([
+            'id' => $sensor->id,
+            'tank_id' => $sensor->tank_id,
+            'last_seen_at' => $sensor->last_seen_at,
+        ]));
 
-        return $this->sensorRepository->delete($sensor);
+        return $sensor;
     }
 }

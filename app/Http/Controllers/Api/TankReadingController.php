@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TankReading\TankReadingRequest;
+use App\Http\Requests\TankReadingRequest;
 use App\Http\Resources\TankReadingResource;
-use App\Services\TankReading\TankReadingService;
+use App\Services\TankReadingService;
 use Illuminate\Http\JsonResponse;
 
 class TankReadingController extends Controller

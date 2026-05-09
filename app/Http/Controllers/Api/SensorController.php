@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Sensor\SensorRequest;
+use App\Http\Requests\SensorRequest;
 use App\Http\Resources\SensorResource;
 use App\Services\Sensor\SensorService;
 use Illuminate\Http\JsonResponse;

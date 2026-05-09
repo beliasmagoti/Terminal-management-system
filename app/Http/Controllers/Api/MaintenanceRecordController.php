@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MaintenanceRecord\MaintenanceRecordRequest;
+use App\Http\Requests\MaintenanceRecordRequest;
 use App\Http\Resources\MaintenanceRecordResource;
 use App\Services\MaintenanceRecord\MaintenanceRecordService;
 use Illuminate\Http\JsonResponse;

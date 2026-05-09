@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Terminal extends Model
 {
+use HasUuids;
+    // HasUuid;
 
-    use HasUuid;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'name',

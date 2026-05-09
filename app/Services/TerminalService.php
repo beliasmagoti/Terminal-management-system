@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Terminal;
+namespace App\Services;
 
 use App\Interfaces\TerminalRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\DeviceToken;
+namespace App\Services;
 
 use App\Repositories\Contracts\DeviceTokenRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;

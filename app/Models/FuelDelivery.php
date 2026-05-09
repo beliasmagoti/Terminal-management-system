@@ -5,11 +5,12 @@ namespace App\Models;
 use App\Enums\DeliveryStatus;
 use App\Enums\TankStatus;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class FuelDelivery extends Model
 {
-    use HasUuid;
+    use HasUuids;
     protected $fillable = [
         'terminal_id',
         'tank_id',

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class TankReading extends Model
 {
+    use HasUuids;
     protected $fillable = [
+        'terminal_id',
         'tank_id',
         'sensor_id',
         'fuel_level_liters',

@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('tank_readings', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->foreignUuid('tank_id')->constrained('tanks')->cascadeOnDelete(); 
             $table->foreignUuid('terminal_id')->constrained('terminals')->cascadeOnDelete(); 
             $table->foreignUuid('sensor_id')->constrained('sensors')->cascadeOnDelete(); 
-            $table->decimal('fuel_level_litres', 15, 2);
+            $table->decimal('fuel_level_liters', 15, 2);
             $table->string('water_level');
             $table->decimal('current_volume', 15, 2);
             $table->decimal('fuel_level_percent', 5, 2);
@@ -24,6 +25,8 @@ return new class extends Migration
             $table->decimal('pressure_kpa', 10, 2);
             $table->decimal('density', 5, 2);
             $table->timestamp('recorded_at');
+            $table->enum('status', ['normal', 'abnormal', 'critical'])->default('normal');
+             $table->timestamp('reading_time');
             $table->timestamps();
         });
     }

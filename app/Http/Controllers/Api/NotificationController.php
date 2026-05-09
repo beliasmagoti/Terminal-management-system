@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Notification\NotificationRequest;
+use App\Http\Requests\NotificationRequest;
 use App\Http\Resources\NotificationResource;
-use App\Services\Notification\NotificationService;
+use App\Services\NotificationService;
 use Illuminate\Http\JsonResponse;
 
 class NotificationController extends Controller

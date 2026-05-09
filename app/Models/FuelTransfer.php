@@ -4,11 +4,12 @@ namespace App\Models;
 
 use App\Enums\TransferStatusType;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class FuelTransfer extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     protected $fillable = [
         'from_tank_id',

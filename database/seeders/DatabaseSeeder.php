@@ -18,6 +18,12 @@ class DatabaseSeeder extends Seeder
         $this ->call(
             [RolesAndPermissionsSeeder::class]
         );
+            $this->call([
+        TerminalSeeder::class,
+        TankSeeder::class,
+        SensorSeeder::class,
+        TankReadingSeeder::class,
+    ]);
 
     }
 }

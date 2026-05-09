@@ -2,6 +2,8 @@
 
 namespace App\Services\MaintenanceRecord;
 
+use App\Events\MaintenanceRecord\MaintenanceCompleted;
+use App\Events\MaintenanceRecord\MaintenanceScheduled;
 use App\Interfaces\MaintenanceRecordRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -41,7 +43,7 @@ class MaintenanceRecordService
      */
     public function create(array $data)
     {
-        return $this->maintenanceRecordRepository->create([
+        $record = $this->maintenanceRecordRepository->create([
             'tank_id' => $data['tank_id'] ?? null,
             'sensor_id' => $data['sensor_id'] ?? null,
             'performed_by' => $data['performed_by'],
@@ -56,6 +58,23 @@ class MaintenanceRecordService
             'vendor_name' => $data['vendor_name'] ?? null,
             'notes' => $data['notes'] ?? null,
         ]);
+
+        /**
+         * Fire scheduled event
+         */
+        if (!empty($record->scheduled_at)) {
+            event(new MaintenanceScheduled([
+                'id' => $record->id,
+                'tank_id' => $record->tank_id,
+                'sensor_id' => $record->sensor_id,
+                'title' => $record->title,
+                'maintenance_type' => $record->maintenance_type,
+                'scheduled_at' => $record->scheduled_at,
+                'status' => $record->status,
+            ]));
+        }
+
+        return $record;
     }
 
     /**
@@ -65,7 +84,7 @@ class MaintenanceRecordService
     {
         $record = $this->getById($id);
 
-        return $this->maintenanceRecordRepository->update($record, [
+        $updatedRecord = $this->maintenanceRecordRepository->update($record, [
             'title' => $data['title'] ?? $record->title,
             'description' => $data['description'] ?? $record->description,
             'maintenance_type' => $data['maintenance_type'] ?? $record->maintenance_type,
@@ -77,6 +96,26 @@ class MaintenanceRecordService
             'vendor_name' => $data['vendor_name'] ?? $record->vendor_name,
             'notes' => $data['notes'] ?? $record->notes,
         ]);
+
+        /**
+         * Fire completed event
+         */
+        if (
+            $updatedRecord->status === 'completed' ||
+            !empty($updatedRecord->completed_at)
+        ) {
+            event(new MaintenanceCompleted([
+                'id' => $updatedRecord->id,
+                'tank_id' => $updatedRecord->tank_id,
+                'sensor_id' => $updatedRecord->sensor_id,
+                'title' => $updatedRecord->title,
+                'maintenance_type' => $updatedRecord->maintenance_type,
+                'completed_at' => $updatedRecord->completed_at,
+                'status' => $updatedRecord->status,
+            ]));
+        }
+
+        return $updatedRecord;
     }
 
     /**

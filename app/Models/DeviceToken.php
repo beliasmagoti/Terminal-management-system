@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class DeviceToken extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     protected $fillable = [
         'sensor_id',

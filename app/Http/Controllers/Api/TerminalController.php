@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Terminal\TerminalRequest;
+use App\Http\Requests\TerminalRequest;
 use App\Http\Resources\TerminalResource;
-use App\Services\Terminal\TerminalService;
+use App\Services\TerminalService;
 use Illuminate\Http\JsonResponse;
 
 class TerminalController extends Controller

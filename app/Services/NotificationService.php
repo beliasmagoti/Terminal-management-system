@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Notification;
+namespace App\Services;
 
 use App\Interfaces\NotificationRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
